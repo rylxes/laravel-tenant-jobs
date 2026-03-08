@@ -1,5 +1,7 @@
 # Laravel Tenant Jobs
 
+> **[Full Documentation](https://rylxes.com/docs/laravel-tenant-jobs)** — Complete usage guide, configuration reference, and API docs.
+
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/rylxes/laravel-tenant-jobs.svg?style=flat-square)](https://packagist.org/packages/rylxes/laravel-tenant-jobs)
 [![Total Downloads](https://img.shields.io/packagist/dt/rylxes/laravel-tenant-jobs.svg?style=flat-square)](https://packagist.org/packages/rylxes/laravel-tenant-jobs)
 [![License](https://img.shields.io/packagist/l/rylxes/laravel-tenant-jobs.svg?style=flat-square)](https://packagist.org/packages/rylxes/laravel-tenant-jobs)
