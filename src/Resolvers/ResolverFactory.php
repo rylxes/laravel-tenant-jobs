@@ -17,6 +17,7 @@ class ResolverFactory
         }
 
         return match ($driver) {
+            'multitenancy' => new MultitenancyTenantResolver(),
             'spatie' => new SpatieTenantResolver(),
             'stancl' => new StanclTenantResolver(),
             default => static::resolveCustom($driver),
@@ -28,6 +29,10 @@ class ResolverFactory
      */
     public static function detect(): string
     {
+        if (class_exists(\Rylxes\Multitenancy\TenantManager::class)) {
+            return 'multitenancy';
+        }
+
         if (class_exists(\Stancl\Tenancy\Tenancy::class)) {
             return 'stancl';
         }
@@ -37,8 +42,8 @@ class ResolverFactory
         }
 
         throw new InvalidArgumentException(
-            'No supported tenancy package detected. Install spatie/laravel-multitenancy '
-            . 'or stancl/tenancy, or set a custom resolver class in config/tenant-jobs.php.'
+            'No supported tenancy package detected. Install rylxes/laravel-multitenancy, '
+            . 'spatie/laravel-multitenancy, or stancl/tenancy, or set a custom resolver class in config/tenant-jobs.php.'
         );
     }
 

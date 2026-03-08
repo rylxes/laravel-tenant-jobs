@@ -26,6 +26,7 @@
         "phpunit/phpunit": "^10.0|^11.0"
     },
     "suggest": {
+        "rylxes/laravel-multitenancy": "Recommended: first-class integration with zero-config setup (^1.0)",
         "spatie/laravel-multitenancy": "Required if using the Spatie tenant resolver (^3.0|^4.0)",
         "stancl/tenancy": "Required if using the Stancl tenant resolver (^3.0)"
     },

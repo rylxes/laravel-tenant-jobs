@@ -8,10 +8,13 @@ return [
     |--------------------------------------------------------------------------
     |
     | Which tenancy package adapter to use. Supported values:
-    |   - 'auto'   : Auto-detect stancl/tenancy or spatie/laravel-multitenancy
-    |   - 'spatie'  : Force spatie/laravel-multitenancy resolver
-    |   - 'stancl'  : Force stancl/tenancy resolver
-    |   - FQCN      : A custom class implementing TenantJobs\Contracts\TenantResolver
+    |   - 'auto'          : Auto-detect installed tenancy package (recommended)
+    |   - 'multitenancy'  : Force rylxes/laravel-multitenancy resolver (preferred)
+    |   - 'spatie'         : Force spatie/laravel-multitenancy resolver
+    |   - 'stancl'         : Force stancl/tenancy resolver
+    |   - FQCN             : A custom class implementing TenantJobs\Contracts\TenantResolver
+    |
+    | Auto-detection order: rylxes/laravel-multitenancy > stancl/tenancy > spatie/laravel-multitenancy
     |
     */
     'resolver' => 'auto',

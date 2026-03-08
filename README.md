@@ -5,7 +5,9 @@
 [![License](https://img.shields.io/packagist/l/rylxes/laravel-tenant-jobs.svg?style=flat-square)](https://packagist.org/packages/rylxes/laravel-tenant-jobs)
 [![PHP Version](https://img.shields.io/packagist/php-v/rylxes/laravel-tenant-jobs.svg?style=flat-square)](https://packagist.org/packages/rylxes/laravel-tenant-jobs)
 
-Bulletproof multi-tenant queue job handling for Laravel. Fixes the six most common queue problems in multi-tenant applications using [stancl/tenancy](https://tenancyforlaravel.com/) or [spatie/laravel-multitenancy](https://spatie.be/docs/laravel-multitenancy).
+Bulletproof multi-tenant queue job handling for Laravel. Fixes the six most common queue problems in multi-tenant applications.
+
+**Recommended:** Use with [rylxes/laravel-multitenancy](https://github.com/rylxes/laravel-multitenancy) for zero-config integration. Also supports [stancl/tenancy](https://tenancyforlaravel.com/) and [spatie/laravel-multitenancy](https://spatie.be/docs/laravel-multitenancy).
 
 ## The Problem
 
@@ -26,7 +28,7 @@ This package fixes all six known failure modes:
 
 - PHP 8.1+
 - Laravel 10, 11, or 12
-- One of: `spatie/laravel-multitenancy` (^3.0|^4.0) or `stancl/tenancy` (^3.0)
+- One of: `rylxes/laravel-multitenancy` (^1.0, recommended), `spatie/laravel-multitenancy` (^3.0|^4.0), or `stancl/tenancy` (^3.0)
 
 ## Installation
 
@@ -48,8 +50,9 @@ php artisan vendor:publish --tag=tenant-jobs-config
 // config/tenant-jobs.php
 
 return [
-    // 'auto' detects which tenancy package is installed.
-    // Or force: 'spatie', 'stancl', or a custom FQCN.
+    // 'auto' detects installed tenancy package.
+    // Or force: 'multitenancy', 'spatie', 'stancl', or a custom FQCN.
+    // Detection order: rylxes/laravel-multitenancy > stancl/tenancy > spatie/laravel-multitenancy
     'resolver' => 'auto',
 
     // Auto-apply tenant context to all queued jobs via event listeners.
@@ -82,7 +85,7 @@ The package uses a two-layer defense:
 1. **Event listeners** (`JobProcessing` / `JobProcessed` / `JobFailed`) provide global coverage — every job gets tenant context initialized from its payload and cleaned up after.
 2. **Job middleware** (`TenantJobMiddleware`) wraps execution in `try/finally` for guaranteed cleanup even on exceptions.
 
-A `TenantResolver` interface abstracts over both tenancy packages so the same code works with either.
+A `TenantResolver` interface abstracts over all supported tenancy packages so the same code works with any of them.
 
 ## Usage
 
@@ -249,9 +252,19 @@ class ProcessOrder implements ShouldQueue
 }
 ```
 
+### Integration with rylxes/laravel-multitenancy
+
+If you use [rylxes/laravel-multitenancy](https://github.com/rylxes/laravel-multitenancy), integration is **zero-config**:
+
+```bash
+composer require rylxes/laravel-multitenancy rylxes/laravel-tenant-jobs
+```
+
+The `ResolverFactory` auto-detects `rylxes/laravel-multitenancy` as the preferred resolver. No configuration needed — tenant context is automatically preserved across all queued jobs, retries, batches, and notifications.
+
 ### Custom Tenant Resolver
 
-If you're not using spatie or stancl, implement the `TenantResolver` interface:
+If you're not using a supported package, implement the `TenantResolver` interface:
 
 ```php
 use TenantJobs\Contracts\TenantResolver;
@@ -280,6 +293,7 @@ src/
   TenantJobsServiceProvider.php       — Orchestrates all components
   Contracts/TenantResolver.php        — Abstraction over tenancy packages
   Resolvers/
+    MultitenancyTenantResolver.php    — rylxes/laravel-multitenancy adapter (preferred)
     SpatieTenantResolver.php          — spatie/laravel-multitenancy adapter
     StanclTenantResolver.php          — stancl/tenancy adapter
     ResolverFactory.php               — Auto-detection + custom resolver
