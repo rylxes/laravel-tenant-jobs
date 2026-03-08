@@ -1,0 +1,39 @@
+name: Update Packagist (Fallback)
+
+# NOTE: This workflow is OPTIONAL and only needed if GitHub webhook fails.
+# If you've connected your GitHub account to Packagist and added the webhook,
+# Packagist updates automatically on tag push - no secrets needed!
+#
+# To disable this workflow: Delete this file or add "if: false" below.
+# To use this workflow: Add PACKAGIST_USERNAME and PACKAGIST_TOKEN secrets.
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  update-packagist:
+    runs-on: ubuntu-latest
+    # Only run if secrets are configured (skip if using webhook)
+    if: ${{ secrets.PACKAGIST_TOKEN != '' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update Packagist via API
+        run: |
+          curl -XPOST -H'content-type:application/json' \
+            "https://packagist.org/api/update-package?username=${{ secrets.PACKAGIST_USERNAME }}&apiToken=${{ secrets.PACKAGIST_TOKEN }}" \
+            -d'{"repository":{"url":"https://packagist.org/packages/rylxes/laravel-tenant-jobs"}}'
+
+      - name: Notify Success
+        if: success()
+        run: echo "Packagist updated via API"
+
+      - name: Notify Failure
+        if: failure()
+        run: echo "Failed to update Packagist via API"
